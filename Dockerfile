@@ -1,13 +1,13 @@
 # Android Dockerfile
 # Heavily inspired by https://github.com/uber-common/android-build-environment
 
-FROM ubuntu:17.10
+FROM ubuntu:16.04
 
 MAINTAINER Francois Stephany & Benjamin Baudoux "francois@tamere.eu, baudouxbenjamin@gmail.com"
 
 # Sets language to UTF8 : this works in pretty much all cases
 ENV LANG en_US.UTF-8
-RUN locale-gen $LANG
+# RUN locale-gen $LANG
 
 ENV DOCKER_ANDROID_LANG en_US
 ENV DOCKER_ANDROID_DISPLAY_NAME ci-docker
@@ -29,11 +29,11 @@ RUN apt-get install -y \
   gcc \
   git \
   groff \
-  lib32stdc++6 \
-  lib32z1 \
-  lib32z1-dev \
-  lib32ncurses5 \
-  lib32bz2-1.0 \
+#   lib32stdc++6 \
+#   lib32z1 \
+#   lib32z1-dev \
+#   lib32ncurses5 \
+#   lib32bz2-1.0 \
   libc6-dev \
   libgmp-dev \
   libmpc-dev \
@@ -66,7 +66,7 @@ RUN apt-get clean
 
 # Install Android SDK
 RUN wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-RUN unzip sdk-tools-linux-3859397.zip
+RUN unzip sdk-tools-linux-3859397.zip -d android-sdk-linux
 RUN mv android-sdk-linux /usr/local/android-sdk
 RUN rm sdk-tools-linux-3859397.zip
 
@@ -85,7 +85,7 @@ RUN rm android-ndk-r16b-linux-x86_64.zip
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV ANDROID_SDK_HOME $ANDROID_HOME
 ENV ANDROID_NDK_HOME /usr/local/android-ndk
-ENV JENKINS_HOME $HOME
+
 ENV PATH ${INFER_HOME}/bin:${PATH}
 ENV PATH $PATH:$ANDROID_SDK_HOME/tools
 ENV PATH $PATH:$ANDROID_SDK_HOME/platform-tools
@@ -105,7 +105,7 @@ ENV GRADLE_OPTS "-XX:+UseG1GC -XX:MaxGCPauseMillis=1000"
 RUN apt-get clean
 
 # # Add build user account, values are set to default below
-ENV RUN_USER ci_user
+# ENV RUN_USER ci_user
 # ENV RUN_UID 5089
 
 # RUN id $RUN_USER || adduser --uid "$RUN_UID" \
@@ -122,8 +122,8 @@ RUN chmod -R a+rx $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
 # `docker run`
 ENV PROJECT /project
 RUN mkdir $PROJECT
-RUN chown -R $RUN_USER:$RUN_USER $PROJECT
+# RUN chown -R $RUN_USER:$RUN_USER $PROJECT
 WORKDIR $PROJECT
 
-USER $RUN_USER
+# USER $RUN_USER
 RUN echo "sdk.dir=$ANDROID_HOME" > local.properties
