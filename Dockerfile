@@ -89,12 +89,16 @@ ENV ANDROID_NDK_HOME /usr/local/android-ndk
 ENV PATH ${INFER_HOME}/bin:${PATH}
 ENV PATH $PATH:$ANDROID_SDK_HOME/tools
 ENV PATH $PATH:$ANDROID_SDK_HOME/platform-tools
-# ENV PATH $PATH:$ANDROID_SDK_HOME/build-tools/23.0.2
-# ENV PATH $PATH:$ANDROID_SDK_HOME/build-tools/27.0.3
 ENV PATH $PATH:$ANDROID_NDK_HOME
 
 # Export JAVA_HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+
+# Accept Android Licenses
+RUN mkdir "${ANDROID_HOME}/licenses"
+RUN echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> "${ANDROID_HOME}/licenses/android-sdk-license"
+RUN echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> "${ANDROID_HOME}/licenses/android-sdk-license"
+RUN echo "84831b9409646a918e30573bab4c9c91346d8abd" >> "${ANDROID_HOME}/licenses/android-sdk-preview-license"
 
 # Support Gradle
 ENV TERM dumb
@@ -104,26 +108,13 @@ ENV GRADLE_OPTS "-XX:+UseG1GC -XX:MaxGCPauseMillis=1000"
 # Cleaning
 RUN apt-get clean
 
-# # Add build user account, values are set to default below
-# ENV RUN_USER ci_user
-# ENV RUN_UID 5089
-
-# RUN id $RUN_USER || adduser --uid "$RUN_UID" \
-#     --gecos 'Build User' \
-#     --shell '/bin/sh' \
-#     --disabled-login \
-#     --disabled-password "$RUN_USER"
-
 # Fix permissions
-# RUN chown -R $RUN_USER:$RUN_USER $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
 RUN chmod -R a+rx $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
 
 # Creating project directories prepared for build when running
 # `docker run`
 ENV PROJECT /project
 RUN mkdir $PROJECT
-# RUN chown -R $RUN_USER:$RUN_USER $PROJECT
 WORKDIR $PROJECT
 
-# USER $RUN_USER
 RUN echo "sdk.dir=$ANDROID_HOME" > local.properties
