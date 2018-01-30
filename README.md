@@ -8,7 +8,7 @@ DockerHub: https://hub.docker.com/r/tamerescrl/android-docker-build/
 
 ## Build and publish to DockerHub
 
-    $ docker build . -t tamerescrl/android-docker-build 
+    $ docker build . --no-cache -t tamerescrl/android-docker-build
     $ docker push tamerescrl/android-docker-build:latest
 
 ## Usage in Bitbucket Pipeline
